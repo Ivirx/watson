@@ -44,3 +44,50 @@ body {
 	font-size: var(--fz-400);
 	background-color: rgb(var(--black));
 }
+
+.not-found {
+	min-width: 100vw;
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	div {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: start;
+		gap: 0.5rem;
+	}
+
+	h2 {
+		font-size: var(--fz-600);
+		font-weight: 700;
+
+		span {
+			color: rgb(var(--gray));
+
+			&:nth-child(1) {
+				margin-inline-end: 0.5em;
+				padding-inline-end: 0.5em;
+				border-inline-end: 0.125rem solid rgb(var(--gray));
+			}
+		}
+	}
+
+	p {
+		align-self: end;
+
+		a {
+			color: inherit;
+			font: inherit;
+			font-size: var(--fz-300);
+			text-decoration: none;
+			transition: color 200ms ease-in-out;
+
+			&:hover {
+				color: rgb(var(--accent));
+			}
+		}
+	}
+}
