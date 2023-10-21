@@ -1,4 +1,4 @@
-import './STT.scss';
+import './stt.scss';
 
 export const STT = () => {
 	return (

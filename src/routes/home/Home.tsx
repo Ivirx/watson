@@ -21,7 +21,7 @@ export const Home = () => {
 					}
 					return pre + 2;
 				});
-			}, 18);
+			}, 15);
 		}, 500);
 
 		return () => {
