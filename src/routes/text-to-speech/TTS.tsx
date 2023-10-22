@@ -1,8 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import { allVoices, Voice } from '../../components/voices';
 import { Select } from './Select';
+import { Audio } from './Audio';
 import './tts.scss';
+
+type Audio = {
+	id: string;
+	audioUrl: string;
+	endpoint: string;
+	title: string;
+	text: string;
+	voice: string;
+	apikey: string;
+};
 
 export const TTS = () => {
 	const [url, setUrl] = useState<string>('');
@@ -13,6 +26,10 @@ export const TTS = () => {
 	const [fetching, setFetching] = useState(false);
 	const [error, setError] = useState<string>('');
 	const [invalid, setInvalid] = useState<string>('');
+
+	const [audios, setAudios] = useState<Audio[]>([]);
+
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -30,32 +47,91 @@ export const TTS = () => {
 			return;
 		}
 
-		if (text.length > 200) {
+		if (text.length > 400) {
 			setError('Text is too long!');
 			setInvalid('-text');
 			return;
 		}
 
-		console.log({ url, apikey, voice, text });
+		// console.log({ url, apikey, voice, text });
 
 		setError('');
 		setInvalid('');
 		setFetching(true);
-		setTimeout(() => {
-			setFetching(false);
-			setError('Something went wrong!');
-		}, 4000);
+
+		axios
+			.request({
+				url: `${url}?voice=${voice?.value}`,
+				method: 'POST',
+				data: {
+					text,
+				},
+				auth: {
+					username: 'apikey',
+					password: apikey,
+				},
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'audio/mp3',
+				},
+				responseType: 'blob',
+			})
+			.then((response) => {
+				// console.log('response', response);
+
+				const blob = new Blob([response.data], { type: 'audio/mpeg' });
+				const objectURL = URL.createObjectURL(blob);
+
+				const newAudio: Audio = {
+					id: Date.now().toString(),
+					title: text.length > 100 ? text.slice(0, 100) + ' . . .' : text,
+					audioUrl: objectURL,
+					endpoint: url,
+					apikey: apikey,
+					text: text,
+					voice: voice?.value,
+				};
+
+				setAudios((pre) => [newAudio, ...pre]);
+				setFetching(false);
+			})
+			.catch((error) => {
+				// console.log('error', error);
+
+				if (error.code === 'ERR_NETWORK') {
+					setError('Please check your Internet OR URL/Apikey.');
+					setInvalid('-url-apikey');
+					setFetching(false);
+					return;
+				}
+
+				setError(error.message);
+				setInvalid('');
+				setFetching(false);
+			});
 	}
 
-	function removerError() {
+	function removeError() {
 		setError('');
 		setInvalid('');
 	}
 
+	function handleDelete(id: string) {
+		setAudios((pre) => pre.filter((audio) => audio.id !== id));
+	}
+
+	useEffect(() => {
+		const id = setTimeout(() => {
+			setIsLoaded(true);
+		}, 200);
+
+		return () => clearTimeout(id);
+	}, []);
+
 	return (
-		<section className={`page`}>
+		<section className={`page ${isLoaded ? 'load' : ''}`}>
 			<h2 className='heading'>
-				<span>WAtson</span>
+				<Link to={'/'}>WAtson</Link>
 				<span>/&nbsp;text to speech</span>
 			</h2>
 			<form onSubmit={handleSubmit}>
@@ -71,7 +147,7 @@ export const TTS = () => {
 						placeholder='. . .'
 						value={url}
 						onChange={(event) => setUrl(event.target.value)}
-						onFocus={removerError}
+						onFocus={removeError}
 					/>
 				</div>
 				<div className='row'>
@@ -89,7 +165,7 @@ export const TTS = () => {
 							placeholder='. . .'
 							value={apikey}
 							onChange={(event) => setApikey(event.target.value)}
-							onFocus={removerError}
+							onFocus={removeError}
 						/>
 					</div>
 					<div
@@ -117,7 +193,7 @@ export const TTS = () => {
 						placeholder='Enter your text here . . .'
 						value={text}
 						onChange={(event) => setText(event.target.value)}
-						onFocus={removerError}
+						onFocus={removeError}
 					></textarea>
 				</div>
 				<div className='status'>
@@ -135,6 +211,13 @@ export const TTS = () => {
 					<button type='submit'>Synthesize</button>
 				</div>
 			</form>
+			<div className='audio'>
+				<h2>Your Audios</h2>
+				{!audios.length && <p className='no-audio'>You have no audios yet.</p>}
+				{audios.map((audio) => (
+					<Audio key={audio.id} audio={audio} handleDelete={handleDelete} />
+				))}
+			</div>
 		</section>
 	);
 };
