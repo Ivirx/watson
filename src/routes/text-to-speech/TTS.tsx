@@ -13,7 +13,7 @@ type Audio = {
 	endpoint: string;
 	title: string;
 	text: string;
-	voice: string;
+	voice: Voice;
 	apikey: string;
 };
 
@@ -89,7 +89,7 @@ export const TTS = () => {
 					endpoint: url,
 					apikey: apikey,
 					text: text,
-					voice: voice?.value,
+					voice: voice,
 				};
 
 				setAudios((pre) => [newAudio, ...pre]);
@@ -125,7 +125,10 @@ export const TTS = () => {
 			setIsLoaded(true);
 		}, 200);
 
-		return () => clearTimeout(id);
+		return () => {
+			clearTimeout(id);
+			setIsLoaded(false);
+		};
 	}, []);
 
 	return (

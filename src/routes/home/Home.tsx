@@ -1,15 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import './home.scss';
 
 export const Home = () => {
-	const [onHome, setOnHome] = useState(false);
+	const homeRef = useRef<HTMLDivElement>(null);
+	const [onHome, setOnHome] = useState(sessionStorage.getItem('onHome') === 'true');
 	const [number, setNumber] = useState(0);
 
 	useEffect(() => {
-		let timeIntervalID: number;
+		if (onHome) {
+			homeRef.current?.classList.remove('load');
+			homeRef.current?.classList.remove('no-delay');
 
+			setTimeout(() => {
+				homeRef.current?.classList.add('no-delay');
+			}, 200);
+			return;
+		}
+
+		let timeIntervalID: number;
 		let timeoutID = setTimeout(() => {
 			timeIntervalID = setInterval(() => {
 				setNumber((pre) => {
@@ -28,6 +38,8 @@ export const Home = () => {
 			clearTimeout(timeoutID);
 			clearInterval(timeIntervalID);
 			setOnHome(false);
+
+			sessionStorage.setItem('onHome', 'true');
 		};
 	}, []);
 
@@ -68,7 +80,7 @@ export const Home = () => {
 					</svg>
 				</div>
 			</div>
-			<section className={`home ${onHome ? 'load' : ''}`}>
+			<section ref={homeRef} className={`home ${onHome ? 'load' : ''}`}>
 				<div className='home__grid'>
 					<div className='first'>
 						<div>
