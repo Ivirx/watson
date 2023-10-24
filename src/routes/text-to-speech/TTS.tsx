@@ -47,6 +47,16 @@ export const TTS = () => {
 			return;
 		}
 
+		if (
+			!url.toLowerCase().startsWith('https://api.') ||
+			!url.toLowerCase().endsWith('/v1/synthesize')
+		) {
+			console.log('not valid : ', url);
+			setError('URL is not valid!');
+			setInvalid('-url');
+			return;
+		}
+
 		if (text.length > 400) {
 			setError('Text is too long!');
 			setInvalid('-text');

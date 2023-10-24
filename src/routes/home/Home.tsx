@@ -15,8 +15,11 @@ export const Home = () => {
 
 			setTimeout(() => {
 				homeRef.current?.classList.add('no-delay');
-			}, 200);
-			return;
+			}, 50);
+
+			return () => {
+				sessionStorage.setItem('onHome', 'true');
+			};
 		}
 
 		let timeIntervalID: number;

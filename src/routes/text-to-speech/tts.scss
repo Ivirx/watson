@@ -76,13 +76,13 @@
 
 		&.invalid {
 			.label {
-				color: #f45;
+				color: #f45d;
 			}
 
 			input,
 			textarea,
 			.value {
-				border-color: #f45;
+				border-color: #f45d;
 			}
 		}
 
@@ -105,9 +105,10 @@
 
 	.label {
 		padding-inline: var(--input-padding);
+		color: rgb(var(--gray));
 		font-family: 'Major Mono Display', monospace;
 		font-size: var(--fz-200);
-		font-weight: 500;
+		font-weight: 600;
 		text-transform: lowercase;
 		letter-spacing: 0.0875em;
 		position: relative;
@@ -252,6 +253,7 @@
 	.status {
 		font-family: 'Major Mono Display', monospace;
 		font-size: var(--fz-300);
+		font-weight: 600;
 		text-transform: lowercase;
 		display: flex;
 
@@ -291,7 +293,7 @@
 		}
 
 		.error {
-			color: #f45;
+			color: #f45d;
 		}
 	}
 
