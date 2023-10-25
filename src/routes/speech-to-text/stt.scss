@@ -1,0 +1,254 @@
+.page {
+	width: var(--clamp);
+	margin-inline: auto;
+	padding-inline: var(--padding);
+	padding-block-start: 18vh;
+	padding-block-end: 20vh;
+	opacity: 0;
+	transition: opacity 1000ms ease-in-out;
+	pointer-events: none;
+
+	&.load {
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	.heading {
+		margin-block-end: 4em;
+		font-family: 'Major Mono Display', monospace;
+		isolation: isolate;
+
+		a {
+			margin-inline-end: 0.375em;
+			color: inherit;
+			font-size: var(--fz-800);
+			font-weight: 500;
+			text-decoration: none;
+			position: relative;
+
+			&::before {
+				content: '';
+				width: 105%;
+				height: 0.5rem;
+				background-color: rgb(var(--gray));
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				translate: 0 50%;
+				z-index: -1;
+				transition: translate 200ms ease-in-out;
+			}
+
+			&:hover,
+			&:focus-visible {
+				outline: none;
+
+				&::before {
+					translate: 0 0;
+					background-color: rgb(var(--accent));
+				}
+			}
+		}
+
+		span {
+			font-size: var(--fz-300);
+			font-weight: 400;
+		}
+	}
+
+	form > * {
+		width: 100%;
+	}
+
+	.input {
+		--input-padding: 0.5rem;
+
+		margin-block-end: 3.875rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: stretch;
+		align-items: center;
+		gap: 0.75rem;
+
+		& > * {
+			width: 100%;
+		}
+
+		&.invalid {
+			.label {
+				color: #f45d;
+			}
+
+			input,
+			.sudo-input {
+				border-color: #f45d;
+			}
+		}
+
+		&:focus-within {
+			.label {
+				padding-inline: calc(var(--input-padding) * 2.25);
+
+				&::before {
+					opacity: 1;
+					translate: 62% 0;
+				}
+			}
+
+			input,
+			.sudo-input {
+				border-color: rgb(var(--accent));
+			}
+		}
+	}
+
+	.label {
+		padding-inline: var(--input-padding);
+		color: rgb(var(--gray));
+		font-family: 'Major Mono Display', monospace;
+		font-size: var(--fz-200);
+		font-weight: 600;
+		text-transform: lowercase;
+		letter-spacing: 0.0875em;
+		position: relative;
+		transition: padding 200ms ease-in-out;
+
+		&::before {
+			content: '/';
+			color: rgb(var(--accent));
+			font: inherit;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			opacity: 0;
+			transition: opacity 200ms ease-in-out, translate 200ms ease-in-out;
+		}
+	}
+
+	input,
+	.sudo-input {
+		padding-block: var(--input-padding);
+		padding-block-end: calc(var(--input-padding) * 1.375);
+		padding-inline: var(--input-padding);
+		color: rgb(var(--white));
+		font: inherit;
+		font-size: var(--fz-400);
+		background-color: transparent;
+		border: none;
+		border-block-end: 0.0875rem solid rgb(var(--gray) / 0.5);
+		border-radius: 0.125rem;
+		transition: border 200ms ease-in-out;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.file {
+		position: relative;
+		isolation: isolate;
+		cursor: pointer;
+
+		input {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0;
+			z-index: -10;
+		}
+
+		.sudo-input {
+			line-height: 1.6;
+
+			span:first-child {
+				margin-inline-end: 0.875em;
+				padding-inline-end: 0.75em;
+				color: rgb(var(--gray));
+				border-inline-end: 0.0857em solid rgb(var(--gray));
+			}
+		}
+
+		.types {
+			color: rgb(var(--gray));
+			font-size: var(--fz-300);
+			line-height: 1;
+		}
+	}
+
+	.status {
+		font-family: 'Major Mono Display', monospace;
+		font-size: var(--fz-300);
+		font-weight: 600;
+		text-transform: lowercase;
+		display: flex;
+
+		.fetching {
+			display: flex;
+			justify-content: start;
+			align-items: center;
+			gap: 0.5rem;
+
+			span {
+				animation: wave 1s ease-in-out infinite;
+
+				&:nth-child(1) {
+					animation-delay: 100ms;
+				}
+
+				&:nth-child(2) {
+					animation-delay: 200ms;
+				}
+
+				&:nth-child(3) {
+					animation-delay: 300ms;
+				}
+			}
+
+			@keyframes wave {
+				0% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(-0.375em);
+				}
+				100% {
+					transform: translateY(0);
+				}
+			}
+		}
+
+		.error {
+			color: #f45d;
+		}
+	}
+
+	.button {
+		margin-block-start: 1.5rem;
+		display: flex;
+		justify-content: end;
+		align-items: center;
+
+		button {
+			padding-block: 0.875em;
+			padding-inline: 2.375em;
+			color: #000;
+			font: inherit;
+			font-size: var(--fz-300);
+			font-weight: 500;
+			background-color: rgb(var(--accent));
+			border: none;
+			border-radius: 0.125em;
+			transition: background-color 200ms ease-in-out;
+			cursor: pointer;
+
+			&:hover {
+				background-color: rgb(var(--accent) / 0.875);
+			}
+
+			&:focus-visible {
+				outline: 0.125em solid rgb(var(--accent));
+				outline-offset: 0.125em;
+			}
+		}
+	}
+}

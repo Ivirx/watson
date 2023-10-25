@@ -51,7 +51,6 @@ export const TTS = () => {
 			!url.toLowerCase().startsWith('https://api.') ||
 			!url.toLowerCase().endsWith('/v1/synthesize')
 		) {
-			console.log('not valid : ', url);
 			setError('URL is not valid!');
 			setInvalid('-url');
 			return;
