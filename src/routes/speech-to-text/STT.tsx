@@ -2,13 +2,28 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+import { Text as T } from './Text';
 import './stt.scss';
+
+type Text = {
+	id: string;
+	endpoint: string;
+	apikey: string;
+	text: string;
+	confidence: number;
+	file: {
+		name: string;
+		type: string;
+	};
+};
 
 export const STT = () => {
 	const [url, setUrl] = useState<string>('');
 	const [apikey, setApikey] = useState<string>('');
 	const [file, setFile] = useState<File>();
 	const [fileName, setFileName] = useState<string>('No file is selected!');
+
+	const [texts, setTexts] = useState<Text[]>([]);
 
 	const [fetching, setFetching] = useState(false);
 	const [invalid, setInvalid] = useState<string>('');
@@ -60,13 +75,29 @@ export const STT = () => {
 				data: file,
 			})
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
+
+				setTexts((texts) => [
+					{
+						id: Date.now().toString(),
+						endpoint: url,
+						apikey,
+						text: res.data.results[0].alternatives[0].transcript,
+						confidence: res.data.results[0].alternatives[0].confidence,
+						file: {
+							name: file?.name || '',
+							type: file?.type || '',
+						},
+					},
+					...texts,
+				]);
+
 				setFetching(false);
 				setInvalid('');
 				setError('');
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 
 				if (err.code === 'ERR_NETWORK') {
 					setError('Please check your Internet OR URL/Apikey.');
@@ -107,6 +138,10 @@ export const STT = () => {
 	function removeError() {
 		setError('');
 		setInvalid('');
+	}
+
+	function handleDelete(id: string) {
+		setTexts((pre) => pre.filter((text) => text.id !== id));
 	}
 
 	useEffect(() => {
@@ -193,6 +228,13 @@ export const STT = () => {
 					<button type='submit'>Recognize</button>
 				</div>
 			</form>
+			<div className='text'>
+				<h2>Your Texts</h2>
+				{!texts.length && <p className='no-texts'>You have no Text yet.</p>}
+				{texts.map((text) => (
+					<T key={text.id} text={text} handleDelete={handleDelete} />
+				))}
+			</div>
 		</section>
 	);
 };
